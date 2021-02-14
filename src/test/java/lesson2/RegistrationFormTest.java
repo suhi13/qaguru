@@ -1,3 +1,5 @@
+package lesson2;
+
 import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
@@ -62,9 +64,9 @@ public class RegistrationFormTest {
         $(By.xpath(".//select[contains(@class,'datepicker__year')]")).selectOptionByValue("2003");
         $(By.xpath(".//div[contains(@class,'month-dropdown')]")).click();
         $(By.xpath(".//div[contains(@class,'react-datepicker__week')]/div[contains(text(),'16')]")).click();
-        $(By.xpath("//div[@id='subjectsContainer']")).click();
-        $(By.xpath("//input[@id='subjectsInput']")).setValue(subject)
-                                                   .pressEnter();
+        $(By.xpath(".//div[@id='subjectsContainer']")).click();
+        $(By.xpath(".//input[@id='subjectsInput']")).setValue(subject)
+                                                    .pressEnter();
         $("#hobbies-checkbox-2").parent()
                                 .click();
         $("#currentAddress").setValue(address);
