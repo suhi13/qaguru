@@ -1,15 +1,15 @@
 package lesson4;
 
-import static com.codeborne.selenide.Condition.visible;
+import static com.codeborne.selenide.CollectionCondition.texts;
+import static com.codeborne.selenide.Condition.text;
+import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
 import static com.codeborne.selenide.Selenide.open;
 
 import com.codeborne.selenide.Configuration;
-import com.codeborne.selenide.ElementsCollection;
 import com.github.javafaker.Faker;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
@@ -17,9 +17,7 @@ import org.openqa.selenium.Keys;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 public class RegistrationFormWithFakerTest {
 
@@ -44,51 +42,39 @@ public class RegistrationFormWithFakerTest {
         String address = faker.address().fullAddress();
         String state = "Uttar Pradesh";
         String city = "Merrut";
-
-        List<String> expectedDataList = new ArrayList<>();
-        expectedDataList.add(String.format("%s %s", firstName, lastName));
-        expectedDataList.add(emailAddress);
-        expectedDataList.add(gender);
-        expectedDataList.add(mobile);
-        expectedDataList.add(new SimpleDateFormat("dd MMMM,yyyy").format(date));
-        expectedDataList.add(subject);
-        expectedDataList.add(hobby);
-        expectedDataList.add(picture);
-        expectedDataList.add(address);
-        expectedDataList.add(String.format("%s %s", state, city));
+        File cv = new File(String.format("src/test/resources/%s", picture));
 
         open("https://demoqa.com/automation-practice-form");
         $("#firstName").setValue(firstName);
         $("#lastName").setValue(lastName);
         $("#userEmail").setValue(emailAddress);
-        $(By.xpath(String.format(".//label[text()='%s']", gender))).click();
+        $(byText(gender)).click();
         $("#userNumber").setValue(mobile);
         $("#dateOfBirthInput").sendKeys(Keys.CONTROL + "a");
         $("#dateOfBirthInput").sendKeys(dateOfBirth + Keys.ENTER);
         $(By.xpath(".//div[@id='subjectsContainer']")).click();
-        $(By.xpath(".//input[@id='subjectsInput']")).setValue(subject)
-                                                    .pressEnter();
-        $("#hobbies-checkbox-2").parent()
-                                .click();
+        $(By.xpath(".//input[@id='subjectsInput']")).setValue(subject).pressEnter();
+        $("#hobbies-checkbox-2").parent().click();
         $("#currentAddress").setValue(address);
-        $(By.xpath(".//div[text()='Select State']")).scrollIntoView(true)
-                                                    .click();
+        $(By.xpath(".//div[text()='Select State']")).scrollIntoView(true).click();
         $(By.xpath(".//div[contains(@id,'1')]")).click();
         $(By.xpath(".//div[text()='Select City']")).click();
         $(By.xpath(".//div[contains(@id,'2')]")).click();
-
-        File cv = new File(String.format("src/test/resources/%s", picture));
         $("#uploadPicture").uploadFile(cv);
         $("#submit").click();
 
-        ElementsCollection userDataElementsList = $$(By.xpath(".//tr/td[2]"));
-        List<String> userDataInModal = userDataElementsList.texts();
-
-        $(By.className("modal-open")).shouldBe(visible);
-
-        Assertions.assertLinesMatch(expectedDataList, userDataInModal, "Incorrect userdata was displayed in " +
-                "registration modal");
-
+        $(".modal-title").shouldHave(text("Thanks for submitting the form"));
+        $$(".table-responsive tr").filterBy(text("Student name")).shouldHave(texts(firstName + " " + lastName));
+        $$(".table-responsive tr").filterBy(text("Student email")).shouldHave(texts(emailAddress));
+        $$(".table-responsive tr").filterBy(text("Gender")).shouldHave(texts(gender));
+        $$(".table-responsive tr").filterBy(text("Mobile")).shouldHave(texts(mobile));
+        $$(".table-responsive tr").filterBy(text("Date of birth"))
+                                  .shouldHave(texts(new SimpleDateFormat("dd MMMM,yyyy").format(date)));
+        $$(".table-responsive tr").filterBy(text("Subjects")).shouldHave(texts(subject));
+        $$(".table-responsive tr").filterBy(text("Hobbies")).shouldHave(texts(hobby));
+        $$(".table-responsive tr").filterBy(text("Picture")).shouldHave(texts(picture));
+        $$(".table-responsive tr").filterBy(text("Address")).shouldHave(texts(address));
+        $$(".table-responsive tr").filterBy(text("State and City")).shouldHave(texts(state + " " + city));
         $("#closeLargeModal").click();
     }
 }
