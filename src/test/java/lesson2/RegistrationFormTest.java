@@ -1,24 +1,21 @@
 package lesson2;
 
-import static com.codeborne.selenide.Condition.visible;
+import static com.codeborne.selenide.CollectionCondition.texts;
+import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
 import static com.codeborne.selenide.Selenide.$x;
 import static com.codeborne.selenide.Selenide.open;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.codeborne.selenide.Configuration;
-import com.codeborne.selenide.ElementsCollection;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 public class RegistrationFormTest {
 
@@ -44,29 +41,15 @@ public class RegistrationFormTest {
         String state = "Uttar Pradesh";
         String city = "Merrut";
 
-        List<String> expectedDataList = new ArrayList<>();
-        expectedDataList.add(String.format("%s %s", firstName, lastName));
-        expectedDataList.add(emailAddress);
-        expectedDataList.add(gender);
-        expectedDataList.add(mobile);
-        expectedDataList.add(String.format("%s %s,%s", dateOfBirth, monthOfBirth, yearOfBirth));
-        expectedDataList.add(subject);
-        expectedDataList.add(hobby);
-        expectedDataList.add(picture);
-        expectedDataList.add(address);
-        expectedDataList.add(String.format("%s %s", state, city));
-
         open("https://demoqa.com/automation-practice-form");
         $("#firstName").setValue(firstName);
         $("#lastName").setValue(lastName);
         $("#userEmail").setValue(emailAddress);
         $(byText(gender)).click();
         $("#userNumber").setValue(mobile);
-        $("#dateOfBirthInput").click();
-        $(".react-datepicker__month-select").selectOptionByValue("4");
-        $(".react-datepicker__year-select").click();
-        $(".react-datepicker__year-select").selectOptionByValue("2003");
-        $x(".//div[contains(@class,'react-datepicker__week')]/div[contains(text(),'16')]").click();
+        $("#dateOfBirthInput").sendKeys(Keys.CONTROL + "a");
+        $("#dateOfBirthInput").sendKeys(String.format("%s %s,%s", dateOfBirth, monthOfBirth, yearOfBirth)
+                + Keys.ENTER);
         $("#subjectsInput").click();
         $("#subjectsInput").setValue(subject).pressEnter();
         $("#hobbies-checkbox-2").parent().click();
@@ -78,12 +61,20 @@ public class RegistrationFormTest {
         $("#uploadPicture").uploadFile(new File(String.format("src/test/resources/%s", picture)));
         $("#submit").click();
 
-        ElementsCollection userDataElementsList = $$(By.xpath(".//tr/td[2]"));
-        List<String> userDataInModal = userDataElementsList.texts();
-
-        $(By.className("modal-open")).shouldBe(visible);
-        assertEquals(expectedDataList, userDataInModal, "Incorrect user data was displayed in " +
-                "registration modal");
+        $(".modal-title").shouldHave(text("Thanks for submitting the form"));
+        $$(".table-responsive tr").filterBy(text("Student name")).shouldHave(texts(String.format("%s %s", firstName,
+                lastName)));
+        $$(".table-responsive tr").filterBy(text("Student email")).shouldHave(texts(emailAddress));
+        $$(".table-responsive tr").filterBy(text("Gender")).shouldHave(texts(gender));
+        $$(".table-responsive tr").filterBy(text("Mobile")).shouldHave(texts(mobile));
+        $$(".table-responsive tr").filterBy(text("Date of birth")).shouldHave(texts(String.format("%s %s,%s",
+                dateOfBirth, monthOfBirth, yearOfBirth)));
+        $$(".table-responsive tr").filterBy(text("Subjects")).shouldHave(texts(subject));
+        $$(".table-responsive tr").filterBy(text("Hobbies")).shouldHave(texts(hobby));
+        $$(".table-responsive tr").filterBy(text("Picture")).shouldHave(texts(picture));
+        $$(".table-responsive tr").filterBy(text("Address")).shouldHave(texts(address));
+        $$(".table-responsive tr").filterBy(text("State and City")).shouldHave(texts(String.format("%s %s", state,
+                city)));
 
         $("#closeLargeModal").click();
     }

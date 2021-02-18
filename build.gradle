@@ -7,12 +7,10 @@ repositories {
 }
 
 dependencies {
-    testImplementation 'com.codeborne:selenide:5.18.0'
-    testImplementation "org.junit.jupiter:junit-jupiter-api:5.6.2"
-    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.6.2"
-    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
-    compile group: 'com.github.javafaker', name: 'javafaker', version: '1.0.2'
-    compile "org.slf4j:slf4j-simple:1.7.25"
+    testImplementation 'com.codeborne:selenide:5.17.3'
+    testImplementation 'com.github.javafaker:javafaker:1.0.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
 }
 
 test {
