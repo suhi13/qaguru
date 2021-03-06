@@ -50,9 +50,7 @@ public class AnnotatedStepsTest {
 
         @Step("Search repository {repositoryName}")
         public void searchRepository(String repositoryName) {
-            $(".header-search-input").as("Search field").click();
-            $(".header-search-input").as("Search field").sendKeys(repositoryName);
-            $(".header-search-input").as("Search field").submit();
+            $(".header-search-input").as("Search field").setValue(repositoryName).submit();
         }
 
         @Step("Open {repositoryName} repository in search results")

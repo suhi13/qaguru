@@ -38,9 +38,7 @@ public class PureSelenideTest {
         SelenideLogger.addListener("allure", new AllureSelenide());
 
         open(BASE_URL);
-        $(".header-search-input").as("Search field").click();
-        $(".header-search-input").as("Search field").sendKeys(REPOSITORY);
-        $(".header-search-input").as("Search field").submit();
+        $(".header-search-input").as("Search field").setValue(REPOSITORY).submit();
         $(By.linkText(REPOSITORY)).click();
 
         $(withText("Issues")).shouldBe(Condition.visible);

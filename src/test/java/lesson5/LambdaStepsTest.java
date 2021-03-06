@@ -3,9 +3,8 @@ package lesson5;
 import static com.codeborne.selenide.Selectors.withText;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.open;
+import static com.codeborne.selenide.Condition.visible;
 import static io.qameta.allure.Allure.step;
-
-import com.codeborne.selenide.Condition;
 
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
@@ -28,9 +27,7 @@ public class LambdaStepsTest {
         });
 
         step("Search repository", () -> {
-            $(".header-search-input").as("Search field").click();
-            $(".header-search-input").as("Search field").sendKeys(REPOSITORY);
-            $(".header-search-input").as("Search field").submit();
+            $(".header-search-input").as("Search field").setValue(REPOSITORY).submit();
         });
 
         step("Open repository in search results", () -> {
@@ -38,7 +35,7 @@ public class LambdaStepsTest {
         });
 
         step("Make sure 'Issues' element is displayed in left-side menu", () -> {
-            $(withText("Issues")).shouldBe(Condition.visible);
+            $(withText("Issues")).shouldBe(visible);
         });
     }
 }
